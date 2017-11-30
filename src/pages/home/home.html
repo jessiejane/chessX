@@ -1,0 +1,13 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Chess
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div id="board1" style="width: 400px"></div>
+  <div *ngFor="let item of captured">{{item}}</div>
+
+</ion-content>
