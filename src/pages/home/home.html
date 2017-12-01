@@ -14,10 +14,13 @@
 <div class="rightPane">
   <div class="timer">{{bTimer.min}}:{{bTimer.sec}}</div>
   <div id="score">0-0-0</div>
+  <ion-item>
+  <ion-label>Theme</ion-label>
   <ion-select [(ngModel)]="theme">
     <ion-option value="c">Classic</ion-option>
     <ion-option value="h">Hawks</ion-option>
   </ion-select>
+</ion-item>
   <div class="timer">{{wTimer.min}}:{{wTimer.sec}}</div>
  
 </div>
