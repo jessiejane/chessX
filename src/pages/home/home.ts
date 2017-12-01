@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { OnInit } from '@angular/core';
 import * as $ from 'jquery';
 import * as ChessBoard from "chessboardjs";
 import * as Chess from "chess.js";
@@ -10,21 +11,51 @@ import * as Chess from "chess.js";
 export class HomePage {
 	public game: any;
 	public board: any;
-	public captured: string[]=[];
+	public captured: string[] = [];
+	public theme: any;
+	public wTimer: {
+		min:number,
+		sec:number
+	};
+	public bTimer: {
+		min:number,
+		sec:number
+	};
 	constructor(public navCtrl: NavController) {
-		setTimeout(() => {
-			this.game = new Chess()
-			this.board = ChessBoard('board1', {
-				draggable: true,
-				pieceTheme: 'assets/imgs/{piece}.png',
-				onDragStart: this.onDragStart,
-				onDrop: this.onDrop,
-				onSnapEnd: this.onSnapEnd
-			});
-			this.board.resize();
-			this.board.start();
+		this.game = new Chess()
+		this.wTimer ={min:0, sec:0}
+		this.bTimer= {min:0, sec:0}
+		this.theme = "c"
+		setInterval(() => {
+		if (this.game.turn() === 'w') {
+			if (this.wTimer.sec == 59) {
+				this.wTimer.min++;
+				this.wTimer.sec =0;
+			}
+			this.wTimer.sec++;
+		}
+		else if (this.game.turn() === 'b') {
+			if (this.bTimer.sec == 59) {
+				this.bTimer.min++;
+				this.bTimer.sec =0;
+			}
+			this.bTimer.sec++;
+		}
 
-		}, 3000);
+		},1000)
+	}
+	ngOnInit() {
+		
+		this.board = ChessBoard('board1', {
+			draggable: true,
+			pieceTheme: 'assets/imgs/{piece}.png',
+			showNotation: false,
+			onDragStart: this.onDragStart,
+			onDrop: this.onDrop,
+			onSnapEnd: this.onSnapEnd
+		});
+		this.board.resize();
+		this.board.start();
 	}
 	public removeGreySquares = () => {
 		$('#board1 .square-55d63').css('background', '');
@@ -46,10 +77,10 @@ export class HomePage {
 		}
 
 		this.removeGreySquares();
-		this.onMouseoverSquare(source,piece);
+		this.onMouseoverSquare(source, piece);
 	};
 	public onDrop = (source, target) => {
-		
+
 		// see if the move is legal
 		var move = this.game.move({
 			from: source,
@@ -113,10 +144,10 @@ export class HomePage {
 			this.greySquare(moves[i].to);
 		}
 	};
-	
+
 	public onMouseoutSquare = (square, piece) => {
 		this.removeGreySquares();
 	};
-	
+
 
 }
