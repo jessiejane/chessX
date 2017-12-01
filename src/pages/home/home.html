@@ -8,6 +8,8 @@
 
 <ion-content padding>
   <div id="board1" style="width: 400px"></div>
-  <div *ngFor="let item of captured">{{item}}</div>
+  <div *ngFor="let item of captured" style="width:20px;display:inline">
+  	<img src="assets/imgs/{{item}}.png" style="width:20px" />
+  </div>
 
 </ion-content>
