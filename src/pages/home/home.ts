@@ -19,10 +19,9 @@ export class HomePage {
 				pieceTheme: 'assets/imgs/{piece}.png',
 				onDragStart: this.onDragStart,
 				onDrop: this.onDrop,
-				onMouseoutSquare: this.onMouseoutSquare,
-				onMouseoverSquare: this.onMouseoverSquare,
 				onSnapEnd: this.onSnapEnd
 			});
+			this.board.resize();
 			this.board.start();
 
 		}, 3000);
@@ -45,17 +44,22 @@ export class HomePage {
 			(this.game.turn() === 'b' && piece.search(/^b/) === -1)) {
 			return false;
 		}
+
+		this.removeGreySquares();
+		this.onMouseoverSquare(source,piece);
 	};
 	public onDrop = (source, target) => {
-		this.removeGreySquares();
+		
 		// see if the move is legal
 		var move = this.game.move({
 			from: source,
 			to: target,
 			promotion: 'q' // NOTE: always promote to a queen for example simplicity
 		});
-		if (move.captured != undefined)
-			this.captured.push(move.captured)
+		if (move !== null && move.captured != undefined) {
+			var color = move.color == "b" ? "w" : "b";
+			this.captured.push(color + move.captured.toUpperCase())
+		}
 		// illegal move
 		if (move === null) return 'snapback';
 
@@ -98,7 +102,6 @@ export class HomePage {
 			square: square,
 			verbose: true
 		});
-
 		// exit if there are no moves available for this square
 		if (moves.length === 0) return;
 
