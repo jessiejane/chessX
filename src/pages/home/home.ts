@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import '../../assets/scripts/chessboard-0.3.0.js'
+import * as $ from 'jquery';
+import * as ChessBoard from "chessboardjs";
+import * as Chess from "chess.js";
 @Component({
 	selector: 'page-home',
 	templateUrl: 'home.html'
