@@ -5,9 +5,7 @@ page-home {
 .timer {
 	padding:20px;
 	border:1px solid #d3d3d3;
-	&:first-child {
-		transform: rotate(180deg);
-	}
+	margin: auto;
 }
 .rightPane {
 	float:right;
@@ -17,4 +15,26 @@ page-home {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+}
+
+.playerPane {
+	width:100%;
+	height:50%;
+	display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    &:first-child {
+		transform: rotate(180deg);
+	}
+}
+.boardPane {
+	width:60%;
+	height:100%;
+}
+.gamePane {
+	width:100%;
+	height:100%;
+	display:flex;
+	flex-direction:row;
+	align-items: center;
 }

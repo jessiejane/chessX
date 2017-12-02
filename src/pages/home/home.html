@@ -7,21 +7,46 @@
 </ion-header>
 
 <ion-content padding>
-<div id="board1" style="width: 60%;display:inline-block"></div>
+  <div class="gamePane">
+  <div class="boardPane">
+<div id="board1" style="width:100%;display:inline-block"></div>
   <div *ngFor="let item of captured" style="width:20px;display:inline">
   	<img src="assets/imgs/{{item}}.png" style="width:20px" />
   </div>
+</div>
 <div class="rightPane">
-  <div class="timer">{{bTimer.min}}:{{bTimer.sec}}</div>
-  <div id="score">0-0-0</div>
+  <div class="playerPane">
   <ion-item>
   <ion-label>Theme</ion-label>
   <ion-select [(ngModel)]="theme">
     <ion-option value="c">Classic</ion-option>
     <ion-option value="h">Hawks</ion-option>
+    <ion-option value="r">Rave</ion-option>
+    <ion-option value="w">Weed</ion-option>
+    <ion-option value="s">Scenic</ion-option>
+    <ion-option value="r">Real</ion-option>
+    <ion-option value="d">Dungeon</ion-option>
+    <ion-option value="m">Metallic</ion-option>
   </ion-select>
 </ion-item>
-  <div class="timer">{{wTimer.min}}:{{wTimer.sec}}</div>
- 
+ <div class="timer">{{bTimer.min}}:{{bTimer.sec}}</div>
+</div>
+<div class="playerPane">
+  <ion-item>
+  <ion-label>Theme</ion-label>
+  <ion-select [(ngModel)]="theme">
+    <ion-option value="c">Classic</ion-option>
+    <ion-option value="h">Hawks</ion-option>
+    <ion-option value="r">Rave</ion-option>
+    <ion-option value="w">Weed</ion-option>
+    <ion-option value="s">Scenic</ion-option>
+    <ion-option value="r">Real</ion-option>
+    <ion-option value="d">Dungeon</ion-option>
+    <ion-option value="m">Metallic</ion-option>
+  </ion-select>
+</ion-item>
+<div class="timer">{{wTimer.min}}:{{wTimer.sec}}</div>
+ </div>
+</div>
 </div>
 </ion-content>
