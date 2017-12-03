@@ -5,7 +5,6 @@ page-home {
 .timer {
 	padding:20px;
 	border:1px solid #d3d3d3;
-	margin: auto;
 }
 .rightPane {
 	float:right;
@@ -15,6 +14,7 @@ page-home {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    padding:5px;
 }
 
 .playerPane {
@@ -23,8 +23,21 @@ page-home {
 	display: flex;
     flex-direction: column;
     justify-content: space-between;
+    border: 1px solid #d3d3d3;
+    border-radius: 5px;
+    margin-top: 5px;
     &:first-child {
 		transform: rotate(180deg);
+	}
+	.player {
+		border: 1px solid #d3d3d3;
+    	padding: 20px;
+    	margin-left: 5px;
+	}
+	.score {
+		border: 1px solid #d3d3d3;
+    	padding: 20px;
+    	margin-left: 5px;
 	}
 }
 .boardPane {

@@ -13,6 +13,12 @@ export class HomePage {
 	public board: any;
 	public captured: string[] = [];
 	public theme: any;
+	public lastMoved: string;
+
+	public jessieWins: number;
+	public jessieLosses: number;
+	public stalemates: number;
+
 	public wTimer: {
 		min:number,
 		sec:number
@@ -22,6 +28,10 @@ export class HomePage {
 		sec:number
 	};
 	constructor(public navCtrl: NavController) {
+		this.jessieWins = 0;
+		this.jessieLosses = 0;
+		this.stalemates =0;
+
 		this.game = new Chess()
 		this.wTimer ={min:0, sec:0}
 		this.bTimer= {min:0, sec:0}
@@ -45,7 +55,19 @@ export class HomePage {
 		},1000)
 	}
 	ngOnInit() {
-		
+		$('#board1').click((event) => {
+			var classes = event.target.className.split(" ");
+			if (classes.length == 3) {
+				var target = classes[2].split("-")[1];
+				this.board.move(this.lastMoved + "-" + target);
+				var move = this.game.move({
+					from: this.lastMoved,
+					to: target,
+					promotion: 'q' // NOTE: always promote to a queen for example simplicity
+				});
+				this.removeGreySquares();
+			}
+		});
 		this.board = ChessBoard('board1', {
 			draggable: true,
 			pieceTheme: 'assets/imgs/{piece}.png',
@@ -56,6 +78,7 @@ export class HomePage {
 		});
 		this.board.resize();
 		this.board.start();
+		
 	}
 	public removeGreySquares = () => {
 		$('#board1 .square-55d63').css('background', '');
@@ -71,6 +94,7 @@ export class HomePage {
 		squareEl.css('background', background);
 	};
 	public onDragStart = (source, piece, position, orientation) => {
+
 		if ((this.game.turn() === 'w' && piece.search(/^w/) === -1) ||
 			(this.game.turn() === 'b' && piece.search(/^b/) === -1)) {
 			return false;
@@ -80,7 +104,8 @@ export class HomePage {
 		this.onMouseoverSquare(source, piece);
 	};
 	public onDrop = (source, target) => {
-
+		if (source == target)
+			this.lastMoved = source;
 		// see if the move is legal
 		var move = this.game.move({
 			from: source,
@@ -94,36 +119,8 @@ export class HomePage {
 		// illegal move
 		if (move === null) return 'snapback';
 
-		this.updateStatus();
 	};
-	public updateStatus = () => {
-		var status = '';
-
-		var moveColor = 'White';
-		if (this.game.turn() === 'b') {
-			moveColor = 'Black';
-		}
-
-		// checkmate?
-		if (this.game.in_checkmate() === true) {
-			status = 'Game over, ' + moveColor + ' is in checkmate.';
-		}
-
-		// draw?
-		else if (this.game.in_draw() === true) {
-			status = 'Game over, drawn position';
-		}
-
-		// game still on
-		else {
-			status = moveColor + ' to move';
-
-			// check?
-			if (this.game.in_check() === true) {
-				status += ', ' + moveColor + ' is in check';
-			}
-		}
-	};
+	
 	public onSnapEnd = () => {
 		this.board.position(this.game.fen());
 	};
@@ -143,10 +140,6 @@ export class HomePage {
 		for (var i = 0; i < moves.length; i++) {
 			this.greySquare(moves[i].to);
 		}
-	};
-
-	public onMouseoutSquare = (square, piece) => {
-		this.removeGreySquares();
 	};
 
 
