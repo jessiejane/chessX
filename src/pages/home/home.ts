@@ -97,6 +97,15 @@ export class HomePage {
 
 		if ((this.game.turn() === 'w' && piece.search(/^w/) === -1) ||
 			(this.game.turn() === 'b' && piece.search(/^b/) === -1)) {
+			
+				this.board.move(this.lastMoved + "-" + source);
+				var move = this.game.move({
+					from: this.lastMoved,
+					to: source,
+					promotion: 'q' // NOTE: always promote to a queen for example simplicity
+				});
+				this.removeGreySquares();
+
 			return false;
 		}
 
