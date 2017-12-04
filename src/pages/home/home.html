@@ -1,17 +1,21 @@
 
 <ion-content padding>
-  <div class="gamePane">
-  <div class="boardPane">
+  <div class="gamePane" [ngClass]="theme == 'h' ? 'hawks' : 'classic'">
+  	<div class="boardPane">
+  	<div *ngFor="let item of bCaptured" style="width:30px;display: inline;">
+  	<img src="assets/imgs/{{item}}.png" style="width:30px" />
+  </div>
+  
 <div id="board1" style="width:100%;display:inline-block"></div>
-  <div *ngFor="let item of captured" style="width:20px;display:inline">
-  	<img src="assets/imgs/{{item}}.png" style="width:20px" />
+  <div *ngFor="let item of wCaptured" style="width:30px;display: inline;">
+  	<img src="assets/imgs/{{item}}.png" style="width:30px" />
   </div>
 </div>
 <div class="rightPane">
   <div class="playerPane">
   <ion-item>
   <ion-label>Theme</ion-label>
-  <ion-select [(ngModel)]="theme">
+  <ion-select [(ngModel)]="theme" multiple="false">
     <ion-option value="c">Classic</ion-option>
     <ion-option value="h">Hawks</ion-option>
     <ion-option value="r">Rave</ion-option>
@@ -22,6 +26,7 @@
     <ion-option value="m">Metallic</ion-option>
   </ion-select>
 </ion-item>
+<img id="eagle" src="assets/imgs/eagle.png" style="width:100px;display:none">
 <div style="display:flex;margin:auto">
  <div class="timer">{{bTimer.min}}:{{bTimer.sec}}</div>
  <div class="player">Jessie</div>
@@ -31,7 +36,7 @@
 <div class="playerPane">
   <ion-item>
   <ion-label>Theme</ion-label>
-  <ion-select [(ngModel)]="theme">
+  <ion-select [(ngModel)]="theme" multiple="false">
     <ion-option value="c">Classic</ion-option>
     <ion-option value="h">Hawks</ion-option>
     <ion-option value="r">Rave</ion-option>
@@ -42,6 +47,7 @@
     <ion-option value="m">Metallic</ion-option>
   </ion-select>
 </ion-item>
+<img id="seahawk" src="assets/imgs/seahawk.svg" style="width:100px;display:none">
 <div style="display:flex;margin:auto">
 <div class="timer">{{wTimer.min}}:{{wTimer.sec}}</div>
 <div class="player">Matt</div>

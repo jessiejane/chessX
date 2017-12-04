@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { OnInit } from '@angular/core';
+import { Storage } from '@ionic/storage';
 import * as $ from 'jquery';
 import * as ChessBoard from "chessboardjs";
 import * as Chess from "chess.js";
@@ -11,7 +12,10 @@ import * as Chess from "chess.js";
 export class HomePage {
 	public game: any;
 	public board: any;
-	public captured: string[] = [];
+
+	public bCaptured: string[] = [];
+	public wCaptured: string[] = [];
+
 	public theme: any;
 	public lastMoved: string;
 
@@ -20,39 +24,39 @@ export class HomePage {
 	public stalemates: number;
 
 	public wTimer: {
-		min:number,
-		sec:number
+		min: number,
+		sec: number
 	};
 	public bTimer: {
-		min:number,
-		sec:number
+		min: number,
+		sec: number
 	};
-	constructor(public navCtrl: NavController) {
+	constructor(public navCtrl: NavController, private storage: Storage) {
 		this.jessieWins = 0;
 		this.jessieLosses = 0;
-		this.stalemates =0;
+		this.stalemates = 0;
 
 		this.game = new Chess()
-		this.wTimer ={min:0, sec:0}
-		this.bTimer= {min:0, sec:0}
+		this.wTimer = { min: 0, sec: 0 }
+		this.bTimer = { min: 0, sec: 0 }
 		this.theme = "c"
 		setInterval(() => {
-		if (this.game.turn() === 'w') {
-			if (this.wTimer.sec == 59) {
-				this.wTimer.min++;
-				this.wTimer.sec =0;
+			if (this.game.turn() === 'w') {
+				if (this.wTimer.sec == 59) {
+					this.wTimer.min++;
+					this.wTimer.sec = 0;
+				}
+				this.wTimer.sec++;
 			}
-			this.wTimer.sec++;
-		}
-		else if (this.game.turn() === 'b') {
-			if (this.bTimer.sec == 59) {
-				this.bTimer.min++;
-				this.bTimer.sec =0;
+			else if (this.game.turn() === 'b') {
+				if (this.bTimer.sec == 59) {
+					this.bTimer.min++;
+					this.bTimer.sec = 0;
+				}
+				this.bTimer.sec++;
 			}
-			this.bTimer.sec++;
-		}
 
-		},1000)
+		}, 1000)
 	}
 	ngOnInit() {
 		$('#board1').click((event) => {
@@ -65,7 +69,20 @@ export class HomePage {
 					to: target,
 					promotion: 'q' // NOTE: always promote to a queen for example simplicity
 				});
+				if (target[1] == '8' && this.game.get(target).color == "w") {
+					var piece =this.game.get(target)
+					piece.type = "q";
+				}
+				
+				if (target[1] == '1' && this.game.get(target).color == "b") {
+					var piece = this.game.get(target);
+					piece.type = "q";
+				}
+
 				this.removeGreySquares();
+				if (this.game.in_check()) {
+					alert('in check');
+				}
 			}
 		});
 		this.board = ChessBoard('board1', {
@@ -78,8 +95,16 @@ export class HomePage {
 		});
 		this.board.resize();
 		this.board.start();
-		
+
 	}
+	// public onChange(CValue) {
+	// 	if (CValue == "h") {
+	// 		$('div[class*="black"]').css('background-color', 'rgba(0, 204, 0,.7)');
+	// 		$('div[class*="white"]').css('background-color', 'rgba(0, 0, 128,.7)');
+	// 		$('#eagle, #seahawk').show();
+	// 	}
+
+	// }
 	public removeGreySquares = () => {
 		$('#board1 .square-55d63').css('background', '');
 	};
@@ -97,14 +122,21 @@ export class HomePage {
 
 		if ((this.game.turn() === 'w' && piece.search(/^w/) === -1) ||
 			(this.game.turn() === 'b' && piece.search(/^b/) === -1)) {
-			
-				this.board.move(this.lastMoved + "-" + source);
-				var move = this.game.move({
-					from: this.lastMoved,
-					to: source,
-					promotion: 'q' // NOTE: always promote to a queen for example simplicity
-				});
-				this.removeGreySquares();
+
+			this.board.move(this.lastMoved + "-" + source);
+			var move = this.game.move({
+				from: this.lastMoved,
+				to: source,
+				promotion: 'q' // NOTE: always promote to a queen for example simplicity
+			});
+			if (move !== null && move.captured != undefined) {
+				var color = move.color == "b" ? "w" : "b";
+				if (move.color == "b")
+					this.wCaptured.push(color + move.captured.toUpperCase())
+				if (move.color == "w")
+					this.bCaptured.push(color + move.captured.toUpperCase())
+			}
+			this.removeGreySquares();
 
 			return false;
 		}
@@ -123,13 +155,16 @@ export class HomePage {
 		});
 		if (move !== null && move.captured != undefined) {
 			var color = move.color == "b" ? "w" : "b";
-			this.captured.push(color + move.captured.toUpperCase())
+			if (move.color == "b")
+				this.wCaptured.push(color + move.captured.toUpperCase())
+			if (move.color == "w")
+				this.bCaptured.push(color + move.captured.toUpperCase())
 		}
 		// illegal move
 		if (move === null) return 'snapback';
 
 	};
-	
+
 	public onSnapEnd = () => {
 		this.board.position(this.game.fen());
 	};
