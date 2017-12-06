@@ -18,7 +18,7 @@ export class HomePage {
 
 	public theme: any;
 	public lastMoved: string;
-
+	public promoteToQueen: boolean;
 	public jessieWins: number;
 	public jessieLosses: number;
 	public stalemates: number;
@@ -40,49 +40,29 @@ export class HomePage {
 		this.wTimer = { min: 0, sec: 0 }
 		this.bTimer = { min: 0, sec: 0 }
 		this.theme = "c"
-		setInterval(() => {
-			if (this.game.turn() === 'w') {
-				if (this.wTimer.sec == 59) {
-					this.wTimer.min++;
-					this.wTimer.sec = 0;
-				}
-				this.wTimer.sec++;
-			}
-			else if (this.game.turn() === 'b') {
-				if (this.bTimer.sec == 59) {
-					this.bTimer.min++;
-					this.bTimer.sec = 0;
-				}
-				this.bTimer.sec++;
-			}
-
-		}, 1000)
+		
+		this.startTimers();
 	}
 	ngOnInit() {
 		$('#board1').click((event) => {
 			var classes = event.target.className.split(" ");
 			if (classes.length == 3) {
+				if (this.game.in_checkmate())
+					return;
 				var target = classes[2].split("-")[1];
-				this.board.move(this.lastMoved + "-" + target);
+				
 				var move = this.game.move({
 					from: this.lastMoved,
 					to: target,
 					promotion: 'q' // NOTE: always promote to a queen for example simplicity
 				});
-				if (target[1] == '8' && this.game.get(target).color == "w") {
-					var piece =this.game.get(target)
-					piece.type = "q";
+
+				if (move === null) return 'snapback'; 
+				else {
+					this.board.position(this.game.fen());
 				}
 				
-				if (target[1] == '1' && this.game.get(target).color == "b") {
-					var piece = this.game.get(target);
-					piece.type = "q";
-				}
-
 				this.removeGreySquares();
-				if (this.game.in_check()) {
-					alert('in check');
-				}
 			}
 		});
 		this.board = ChessBoard('board1', {
@@ -97,14 +77,7 @@ export class HomePage {
 		this.board.start();
 
 	}
-	// public onChange(CValue) {
-	// 	if (CValue == "h") {
-	// 		$('div[class*="black"]').css('background-color', 'rgba(0, 204, 0,.7)');
-	// 		$('div[class*="white"]').css('background-color', 'rgba(0, 0, 128,.7)');
-	// 		$('#eagle, #seahawk').show();
-	// 	}
-
-	// }
+	
 	public removeGreySquares = () => {
 		$('#board1 .square-55d63').css('background', '');
 	};
@@ -123,12 +96,14 @@ export class HomePage {
 		if ((this.game.turn() === 'w' && piece.search(/^w/) === -1) ||
 			(this.game.turn() === 'b' && piece.search(/^b/) === -1)) {
 
-			this.board.move(this.lastMoved + "-" + source);
+			//this.board.move(this.lastMoved + "-" + source);
 			var move = this.game.move({
 				from: this.lastMoved,
 				to: source,
 				promotion: 'q' // NOTE: always promote to a queen for example simplicity
 			});
+			if (move !== null)
+				this.board.position(this.game.fen());
 			if (move !== null && move.captured != undefined) {
 				var color = move.color == "b" ? "w" : "b";
 				if (move.color == "b")
@@ -144,7 +119,7 @@ export class HomePage {
 		this.removeGreySquares();
 		this.onMouseoverSquare(source, piece);
 	};
-	public onDrop = (source, target) => {
+	public onDrop = (source, target, piece, newPos, oldPos, orientation) => {
 		if (source == target)
 			this.lastMoved = source;
 		// see if the move is legal
@@ -186,5 +161,23 @@ export class HomePage {
 		}
 	};
 
+	public startTimers() {
+		setInterval(() => {
+			if (this.game.turn() === 'w') {
+				if (this.wTimer.sec == 59) {
+					this.wTimer.min++;
+					this.wTimer.sec = 0;
+				}
+				this.wTimer.sec++;
+			}
+			else if (this.game.turn() === 'b') {
+				if (this.bTimer.sec == 59) {
+					this.bTimer.min++;
+					this.bTimer.sec = 0;
+				}
+				this.bTimer.sec++;
+			}
 
+		}, 1000)
+	}
 }
